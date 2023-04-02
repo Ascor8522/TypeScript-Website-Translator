@@ -1,0 +1,66 @@
+@import "../../assets/globals";
+
+.tabs {
+	display: flex;
+	flex-direction: column;
+}
+
+.tab-list {
+	display: flex;
+	flex-direction: row;
+	gap: 0.25rem;
+	flex-grow: 0;
+}
+
+.tab-button {
+	min-width: 5rem;
+	padding: 0.5rem;
+	padding-bottom: 0.75rem;
+	flex-basis: auto;
+	display: flex;
+	flex-direction: column;
+
+	flex-grow: 1;
+	// background-color: $inactive-color;
+
+	// border-left: 1px solid $border-color;
+	// border-top: 1px solid $border-color;
+	// border-right: 1px solid $border-color;
+
+	border-bottom: solid 5px transparent;
+
+	text-align: center;
+	cursor: pointer;
+
+	>big {
+		font-size: 1.5rem;
+	}
+}
+
+.active-tab {
+	background-color: $active-color;
+	border-bottom: solid 5px $accent-color;
+
+	>big {
+		color: $accent-color;
+		font-weight: 600;
+	}
+}
+
+.tab-panel {
+	flex-grow: 1;
+	border: 1px solid $border-color;
+	padding: 1rem;
+}
+
+.badge {
+	margin-left: 0.5rem;
+	background-color: $accent-color;
+	color: $text-color;
+	font-size: 0.75rem;
+	border-radius: 100px;
+	padding-top: 0.1rem;
+	padding-bottom: 0.1rem;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}

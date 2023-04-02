@@ -1,0 +1,14 @@
+@use "sass:color";
+
+$background-color: #181818;
+$accent-color: #0064AB;
+$text-color: #cccccc;
+$accent-text-color: #242424;
+$border-color: #cccccc;
+$disabled-color: #cccccc20;
+$active-color: #000000A0;
+$inactive-color: #00000060;
+
+$meter-color: #cccccc;
+$translated-color: adjust-hue($accent-color, -40deg);
+$reviewed-color: $accent-color;

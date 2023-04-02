@@ -1,0 +1,33 @@
+@import "../../assets/globals";
+
+.meter {
+	display: flex;
+	background-color: $meter-color;
+	height: 0.8rem;
+
+	>* {
+		text-align: center;
+		font-weight: 600;
+		font-size: 0.75rem;
+		line-height: 0.75rem;
+		vertical-align: middle;
+		color: transparent;
+
+		&:hover {
+			color: $accent-text-color;
+			filter: brightness(1.2);
+		}
+	}
+}
+
+.translated {
+	background-color: $translated-color;
+}
+
+.reviewed {
+	background-color: $reviewed-color;
+}
+
+.untranslated {
+	flex-grow: 1;
+}

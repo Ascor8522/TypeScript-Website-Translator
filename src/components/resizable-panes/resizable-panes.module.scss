@@ -1,0 +1,63 @@
+@import "../../assets/globals";
+
+.panes {
+	display: flex;
+	gap: 0.3rem;
+
+	width: 100%;
+	height: 100%;
+
+	&>* {
+		// flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: auto;
+
+		// background-color: #cccccc50;
+		padding: 5px;
+
+		&:last-child {
+			flex-grow: 1;
+			flex-shrink: 1;
+			flex-basis: auto;
+		}
+	}
+
+}
+
+.column-panes {
+	flex-direction: column;
+}
+
+.row-panes {
+	flex-direction: row;
+}
+
+.pane {}
+
+.handle {
+	flex-grow: 0;
+	flex-shrink: 0;
+	user-select: none;
+	box-sizing: border-box;
+
+	padding: 0;
+
+	background-color: $disabled-color;
+
+	&:hover,
+	&:active {
+		background-color: $accent-color;
+	}
+}
+
+$handle-width: 3px;
+
+.horizontal-handle {
+	height: $handle-width;
+	cursor: row-resize;
+}
+
+.vertical-handle {
+	width: $handle-width;
+	cursor: col-resize;
+}
