@@ -29,7 +29,7 @@ export function App() {
 	return (
 		<>
 			<Header />
-			<TranslationProgress reviewed={0.2} translated={0.8} />
+			<TranslationProgress reviewed={0.2} translated={0.6} />
 			<ResizablePanes direction="row">
 				<Tabs defaultTab="all">
 					<Tab name="all" title="16" subtitle="All">
@@ -42,7 +42,11 @@ export function App() {
 						<div>All unreviewed strings here</div>
 					</Tab>
 				</Tabs>
-				<div>Other pane</div>
+				<ResizablePanes direction="column">
+					<div>Other pane</div>
+					<div>Other pane</div>
+					<div>Other pane</div>
+				</ResizablePanes>
 				<Tabs defaultTab="suggestions">
 					<Tab name="suggestions" label="Suggestions">
 						<div>Suggestions here</div>

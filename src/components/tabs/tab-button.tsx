@@ -13,7 +13,7 @@ export default function TabButton({ children: tab, activeTab, setActiveTab }: Ta
 	return (
 		<div class={classNames({
 			[styles["tab-button"]]: true,
-			[styles["active-tab"]]: activeTab === tab.props.name,
+			[styles["active"]]: activeTab === tab.props.name,
 		})} key={tab.props.name} onClick={() => setActiveTab(tab.props.name)}>
 			{
 				"title" in tab.props && <big>{tab.props.title}</big>

@@ -1,0 +1,20 @@
+@import "../../assets/globals";
+
+.path {
+	display: flex;
+	flex-direction: row;
+	gap: 0.25rem;
+	align-items: center;
+}
+
+.segment {
+	background-color: $active-color;
+	color: $accent-color;
+	padding: 0.35rem;
+	border-radius: 5px;
+	cursor: pointer;
+
+	&:hover {
+		background-color: $inactive-color;
+	}
+}

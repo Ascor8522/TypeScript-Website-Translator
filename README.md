@@ -4,6 +4,8 @@
 
 This project is a small **3rd party** Transifex-inspired translation app made to translate the TypeScript website.
 
+![](.github/screenshot.png)
+
 ## Description
 
 This project allows to easily translate the TypeScript website into any language using an easy to use an familiar interface for translators.
@@ -24,7 +26,7 @@ This project allows to easily translate the TypeScript website into any language
 
 ## Live version
 
-Not yet available.
+You'll find a live version of this app at [typescript-website-translator.vercel.app/](https://typescript-website-translator.vercel.app/).
 
 ## How to use
 

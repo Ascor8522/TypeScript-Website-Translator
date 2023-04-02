@@ -35,17 +35,30 @@
 	>big {
 		font-size: 1.5rem;
 	}
-}
 
-.active-tab {
-	background-color: $active-color;
-	border-bottom: solid 5px $accent-color;
+	&:hover {
+		>big {
+			color: $accent-color;
+		}
+	}
 
-	>big {
-		color: $accent-color;
-		font-weight: 600;
+	&.active {
+		background-color: $active-color;
+		border-bottom: solid 5px $accent-color;
+
+		>big {
+			color: $accent-color;
+			font-weight: 600;
+		}
+	}
+
+	&:not(.active) {
+		&:hover {
+			background-color: $inactive-color;
+		}
 	}
 }
+
 
 .tab-panel {
 	flex-grow: 1;
