@@ -9,7 +9,7 @@
 
 	&>* {
 		// flex-grow: 1;
-		flex-shrink: 1;
+		// flex-shrink: 1;
 		flex-basis: auto;
 
 		// background-color: #cccccc50;
@@ -34,9 +34,13 @@
 
 .pane {}
 
+$handle-width: 3px;
+
 .handle {
 	flex-grow: 0;
 	flex-shrink: 0;
+	flex-basis: $handle-width;
+
 	user-select: none;
 	box-sizing: border-box;
 
@@ -49,8 +53,6 @@
 		background-color: $accent-color;
 	}
 }
-
-$handle-width: 3px;
 
 .horizontal-handle {
 	height: $handle-width;

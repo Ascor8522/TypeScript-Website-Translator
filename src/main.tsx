@@ -1,5 +1,5 @@
 import { render } from "preact";
 
-import { App } from "./components/app/app";
+import { App } from "./app/app";
 
 render(<App />, document.getElementById("app")!);

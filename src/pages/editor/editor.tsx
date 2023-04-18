@@ -1,34 +1,11 @@
-import "./app.scss";
+import ResizablePanes from "../../components/resizable-panes/resizable-panes";
+import Tab from "../../components/tabs/tab";
+import Tabs from "../../components/tabs/tabs";
+import TranslationProgress from "../../components/translation-progress/translation-progress";
 
-import { useState } from "preact/hooks";
-
-import Header from "../header/header";
-import ResizablePanes from "../resizable-panes/resizable-panes";
-import Tab from "../tabs/tab";
-import Tabs from "../tabs/tabs";
-import TranslationProgress from "../translation-progress/translation-progress";
-
-export function App() {
-	const [fileSystemDirectoryEntry, setFileSystemDirectoryEntry] = useState<FileSystemDirectoryEntry | null>(null);
-
-	const onFileSystemAccessGranted = (fileSystem: FileSystem) => {
-		/// setFileSystemDirectoryEntry(fileSystem);
-		console.log("File System Access Granted");
-	};
-	const onFileSystemAccessDenied = (error: Error) => {
-		console.log("File System Access Denied");
-	};
-	const requestFileSystemAccess = () => window.webkitRequestFileSystem(window.PERSISTENT, 1024 * 1024, onFileSystemAccessGranted, onFileSystemAccessDenied);
-	/*
-		if(!fileSystemDirectoryEntry) return (
-			<>
-				<input onChange={requestFileSystemAccess} type="file">Request File System Access</input>
-			</>
-		);
-	*/
+export default function Editor({ }: EditorProps) {
 	return (
 		<>
-			<Header />
 			<TranslationProgress reviewed={0.2} translated={0.6} />
 			<ResizablePanes direction="row">
 				<Tabs defaultTab="all">
@@ -64,4 +41,8 @@ export function App() {
 			</ResizablePanes>
 		</>
 	);
+}
+
+interface EditorProps {
+
 }
