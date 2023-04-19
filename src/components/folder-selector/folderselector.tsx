@@ -3,7 +3,7 @@ import styles from "./folderselector.module.scss";
 import uploadFileIcon from "../../assets/icons/uploadFileIcon.svg";
 
 interface FileUploadProps {
-  onFileUploaded: () => void;
+  onFileUploaded: (files: File[]) => void;
 }
 
 function FolderSelector({ onFileUploaded }: FileUploadProps) {
@@ -18,7 +18,7 @@ function FolderSelector({ onFileUploaded }: FileUploadProps) {
       files.forEach((file) => {
         console.log(`File: ${file.name}`);
       });
-      onFileUploaded();
+      onFileUploaded(files);
     }
   };
 
@@ -82,7 +82,7 @@ function FolderSelector({ onFileUploaded }: FileUploadProps) {
       files.forEach((file) => {
         console.log(`File: ${file.name}`);
       });
-      onFileUploaded();
+      onFileUploaded(files); // Pass the files to the callback
     }
   };
   return (
