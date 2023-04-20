@@ -1,4 +1,7 @@
 import Dashboard from "../pages/dashboard/dashboard";
+//import Header from "../components/header/header";
+//import FolderPicker from "../pages/folder-picker/folder-picker";
+//import Editor from "../pages/editor/editor";
 import "./app.scss";
 
 //import Header from "../components/header/header";
@@ -8,10 +11,10 @@ import "./app.scss";
 export function App() {
 	return (
 		<>
-{/* 			<Header /> 
+	{/* 		<Header /> 
 			{!!0 && <FolderPicker />}
 			{!!1 && <Editor />} */}
-			<Dashboard />
+				 <Dashboard />
 
 		</>
 	);
