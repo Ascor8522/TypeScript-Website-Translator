@@ -35,11 +35,11 @@ jobs:
 
       # for each branch in the repo except gh-pages, checkout the branch's latest commit, install dependencies, and build the site into a folder named after the branch
       - run: |
-          BRANCHES=$(git branch -r | grep -v HEAD | grep -v gh-pages)
+          BRANCHES=$(git branch -r | grep -v HEAD | grep -v gh-pages | grep -v dist | sed 's/origin\///')
           for BRANCH in $BRANCHES; do
             git checkout $BRANCH
             npm ci
-            npm run build --outDir "dist/$BRANCH" --base "/$BRANCH" --force
+            npm run build -- --outDir "dist/$BRANCH" --base "/$BRANCH" --force
           done
         shell: bash
 
@@ -50,7 +50,7 @@ jobs:
           path: dist
 
       # move the built site into the root directory
-      - run: mv dist/* .
+      - run: mv -f dist/* .
       - run: rm -rf dist
 
       # commit the changes
