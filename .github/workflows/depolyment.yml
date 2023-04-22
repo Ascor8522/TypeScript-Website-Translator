@@ -3,6 +3,8 @@ on:
   push:
     branches-ignore:
       - gh-pages
+  delete:
+
 jobs:
   vite-build:
     runs-on: ubuntu-latest
@@ -51,11 +53,20 @@ jobs:
           clean: false
 
       # delete all the non-empty directories (outdated + deleted branches) except .git and dist
-      - run: find . -mindepth 1 -maxdepth 1 -type d -not -name .git -not -name dist -exec rm -rf {} +
-
-      # move the built site into the root directory
-      - run: mv -f dist/* .
-      - run: rm -rf dist
+      - run: |
+          OLD_BRANCHES=$(find . -mindepth 1 -maxdepth 1 -type d -not -name .git -not -name dist | sed 's/\.\///')
+          CURRENT_BRANCHES=$(git branch -r | grep -v HEAD | grep -v gh-pages | grep -v dist | sed 's/origin\///')
+          BUILT_BRANCHES=$(find dist -mindepth 1 -maxdepth 1 -type d -not -name dist | sed 's/dist\///')
+          BRANCHES_TO_DELETE=$(echo "$OLD_BRANCHES" | grep -v "$CURRENT_BRANCHES")
+          BRANCHES_TO_UPDATE=$(echo "$CURRENT_BRANCHES" | grep "$OLD_BRANCHES")
+          for BRANCH in $BRANCHES_TO_DELETE; do
+            rm -rf $BRANCH
+          done
+          for BRANCH in $BUILT_BRANCHES; do
+            rm -rf $BRANCH
+            mv -f dist/$BRANCH $BRANCH
+          done
+          rm -rf dist
 
       # commit the changes
       - uses: EndBug/add-and-commit@v9
