@@ -31,7 +31,7 @@ This project allows to easily translate the TypeScript website into any language
 ## Live version
 
 You'll find a live version of this app at
-[typescript-website-translator.vercel.app/](https://typescript-website-translator.vercel.app/).
+[typescript-website-translator.github.io/website/](https://typescript-website-translator.github.io/website/).
 
 ## How to use
 
