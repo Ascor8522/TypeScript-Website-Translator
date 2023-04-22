@@ -9,67 +9,89 @@ jobs:
   vite-build:
     runs-on: ubuntu-latest
     steps:
-      # install nodejs
-      - uses: actions/setup-node@v3
+      - name: Setting up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: latest
 
-      # checkout the latest commit of the current branch
-      - uses: actions/checkout@v3
+      - name: Cloning the repo & checking out the latest commit
+        uses: actions/checkout@v3
 
-      # install dependencies
-      - run: npm ci
+      - name: Installing dependencies
+        run: npm ci
 
-      # build the site
-      - run: npm run build
+      - name: Building the site
+        run: npm run build
 
   gh-pages-build:
     needs: vite-build
     runs-on: ubuntu-latest
     steps:
-      # install nodejs
-      - uses: actions/setup-node@v3
+      - name: Setting up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: latest
 
-      # checkout the repo
-      - uses: actions/checkout@v3
+      - name: Cloning the repo
+        uses: actions/checkout@v3
 
-      # for each branch in the repo except gh-pages, checkout the branch's latest commit, install dependencies, and build the site into a folder named after the branch
-      - run: |
-          BRANCHES=$(git branch -r | grep -v HEAD | grep -v gh-pages | grep -v dist | sed 's/origin\///')
+      - name: Building the site
+        run: |
+          BRANCHES_TO_BUILD=$(git branch -r | grep -v HEAD | grep -v gh-pages | grep -v dist | sed 's/\s*origin\///')
           REPO_NAME=$(echo ${{ github.repository }} | sed 's/.*\///')
-          for BRANCH in $BRANCHES; do
+          echo "::debug::Branches: $BRANCHES_TO_BUILD"
+          echo "::debug::Repo name: $REPO_NAME"
+          for BRANCH in $BRANCHES_TO_BUILD; do
+            echo "::group::Building branch $BRANCH"
             git checkout $BRANCH
             npm ci
             npm run build -- --outDir "dist/$BRANCH" --base "/$REPO_NAME/$BRANCH" --force
+            echo "::endgroup::"
           done
         shell: bash
 
-      # switch to the gh-pages branch
-      - uses: actions/checkout@v3
+      - name: Switching to gh-pages
+        uses: actions/checkout@v3
         with:
           ref: gh-pages
           clean: false
 
-      # delete all the non-empty directories (outdated + deleted branches) except .git and dist
-      - run: |
+      - name: Deleting old branches builds
+        run: |
           OLD_BRANCHES=$(find . -mindepth 1 -maxdepth 1 -type d -not -name .git -not -name dist | sed 's/\.\///')
-          CURRENT_BRANCHES=$(git branch -r | grep -v HEAD | grep -v gh-pages | grep -v dist | sed 's/origin\///')
-          BUILT_BRANCHES=$(find dist -mindepth 1 -maxdepth 1 -type d -not -name dist | sed 's/dist\///')
+          CURRENT_BRANCHES=$(git branch -r | grep -v HEAD | grep -v gh-pages | grep -v dist | sed 's/\s*origin\///')
           BRANCHES_TO_DELETE=$(echo "$OLD_BRANCHES" | grep -v "$CURRENT_BRANCHES")
-          BRANCHES_TO_UPDATE=$(echo "$CURRENT_BRANCHES" | grep "$OLD_BRANCHES")
+          echo "::debug::Old branches: ${OLD_BRANCHES[*]}"
+          echo "::debug::Current branches: ${CURRENT_BRANCHES[*]}"
+          echo "::debug::Branches to delete: ${BRANCHES_TO_DELETE[*]}"
+          echo "::group::Deleting branches"
           for BRANCH in $BRANCHES_TO_DELETE; do
             rm -rf $BRANCH
+            echo "::debug::Deleted old branch $BRANCH"
           done
-          for BRANCH in $BUILT_BRANCHES; do
+          echo "::endgroup::"
+        shell: bash
+
+      - name: Copying updated branches builds
+        run: |
+          OLD_BRANCHES=$(find . -mindepth 1 -maxdepth 1 -type d -not -name .git -not -name dist | sed 's/\.\///')
+          BUILT_BRANCHES=$(find dist -mindepth 1 -maxdepth 1 -type d -not -name dist | sed 's/dist\///')
+          BRANCHES_TO_UPDATE=$(echo "$BUILT_BRANCHES" | grep "$OLD_BRANCHES")
+          echo "::debug::Old branches: ${OLD_BRANCHES[*]}"
+          echo "::debug::Built branches: ${BUILT_BRANCHES[*]}"
+          echo "::debug::Branches to update: ${BRANCHES_TO_UPDATE[*]}"
+          echo "::group::Updating branches"
+          for BRANCH in $BRANCHES_TO_UPDATE; do
             rm -rf $BRANCH
             mv -f dist/$BRANCH $BRANCH
+            echo "::debug::Updated branch $BRANCH"
           done
+          echo "::endgroup::"
           rm -rf dist
+        shell: bash
 
-      # commit the changes
-      - uses: EndBug/add-and-commit@v9
+      - name: Committing the changes
+        uses: EndBug/add-and-commit@v9
         with:
           add: .
           default_author: github_actions
