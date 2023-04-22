@@ -3,6 +3,7 @@ on:
   push:
     branches-ignore:
       - gh-pages
+  create:
   delete:
 
 jobs:
