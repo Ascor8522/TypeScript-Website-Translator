@@ -41,33 +41,38 @@ jobs:
 
       - name: Listing forbidden branch names
         run: |
-          export FORBIDDEN_BRANCH_NAMES="$GH_PAGES_BRANCH|$DIST_DIR|HEAD|.git"
+          # List all the forbidden branch names, that might cause conflicts
+          FORBIDDEN_BRANCH_NAMES="(${{env.GH_PAGES_BRANCH}}|${{env.DIST_DIR}}|HEAD|.git)"
           echo "::debug::Forbidden branch names: $FORBIDDEN_BRANCH_NAMES"
-          echo "::set-env name=FORBIDDEN_BRANCH_NAMES::$FORBIDDEN_BRANCH_NAMES"
+          echo "FORBIDDEN_BRANCH_NAMES=$FORBIDDEN_BRANCH_NAMES" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Getting repo name
         run: |
-          export REPO_NAME=$(echo ${{ github.repository }} | sed 's/.*\///')
+          # Get the name of the repo, to use it later
+          REPO_NAME=$(echo ${{ github.repository }} | sed 's/.*\///')
           echo "::debug::Repo name: $REPO_NAME"
-          echo "::set-env name=REPO_NAME::$REPO_NAME"
+          echo "REPO_NAME=$REPO_NAME" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Listing current branches
         run: |
           # List all the branches in the repo (that have a valid name)
-          export CURRENT_BRANCHES=$(git branch -r | grep -Ev "$FORBIDDEN_BRANCH_NAMES" | sed 's/\s*origin\///')
+          CURRENT_BRANCHES=$(git branch -r | sed 's/\s*origin\///' | grep -Ev "${{env.FORBIDDEN_BRANCH_NAMES}}")
           echo "::debug::Current branches: $CURRENT_BRANCHES"
-          echo "::set-env name=CURRENT_BRANCHES::$CURRENT_BRANCHES"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "CURRENT_BRANCHES<<$EOF" >> "$GITHUB_ENV"
+          echo "$CURRENT_BRANCHES" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Building the site
         run: |
-          for BRANCH in $CURRENT_BRANCHES; do
+          for BRANCH in ${{env.CURRENT_BRANCHES}}; do
             echo "::group::Building branch $BRANCH"
             git checkout $BRANCH
             npm ci
-            npm run build -- --outDir "$DIST_DIR/$BRANCH" --base "/$REPO_NAME/$BRANCH" --force
+            npm run build -- --outDir "${{env.DIST_DIR}}/$BRANCH" --base "/${{env.REPO_NAME}}/$BRANCH" --force
             echo "::endgroup::"
           done
         shell: bash
@@ -75,29 +80,36 @@ jobs:
       - name: Switching to gh-pages
         uses: actions/checkout@v3
         with:
-          ref: gh-pages
+          ref: ${{ env.GH_PAGES_BRANCH }}
           clean: false
 
       - name: Listing old branches builds
         run: |
           # List all the tracked directories in the root of the repo, those are old builds
-          export OLD_BRANCHES=$(git ls-files | xargs dirname | grep -v '^.$' | cut -d'/' -f 1 | uniq)
+          OLD_BRANCHES=$(git ls-files | xargs dirname | grep -v '^.$' | cut -d'/' -f 1 | uniq)
           echo "::debug::Old branches: $OLD_BRANCHES"
-          echo "::set-env name=OLD_BRANCHES::$OLD_BRANCHES"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "OLD_BRANCHES<<$EOF" >> "$GITHUB_ENV"
+          echo "$OLD_BRANCHES" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Listing branches to delete
         run: |
           # List all the branches that got deleted since the last build
-          export BRANCHES_TO_DELETE=$(echo "$OLD_BRANCHES" | grep -v "$CURRENT_BRANCHES")
+          CURRENT_BRANCHES="($(echo ${{env.CURRENT_BRANCHES}} | tr '\n' '|'))"
+          BRANCHES_TO_DELETE=$(echo "${{env.OLD_BRANCHES}}" | grep -Ev "$CURRENT_BRANCHES")
           echo "::debug::Branches to delete: $BRANCHES_TO_DELETE"
-          echo "::set-env name=BRANCHES_TO_DELETE::$BRANCHES_TO_DELETE"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "BRANCHES_TO_DELETE<<$EOF" >> "$GITHUB_ENV"
+          echo "$BRANCHES_TO_DELETE" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Deleting old branches builds
         run: |
           echo "::group::Deleting branches"
-          for BRANCH in $BRANCHES_TO_DELETE; do
+          for BRANCH in ${{env.BRANCHES_TO_DELETE}}; do
             rm -rf $BRANCH
             echo "::debug::Deleted old branch $BRANCH"
           done
@@ -107,15 +119,18 @@ jobs:
       - name: Listing built branches
         run: |
           # List all the branches that got built
-          export BUILT_BRANCHES=$(find "$DIST_DIR" -mindepth 1 -maxdepth 1 -type d | grep -Ev "$FORBIDDEN_BRANCH_NAMES" | sed 's/dist\///')
+          BUILT_BRANCHES=$(find "${{env.DIST_DIR}}" -mindepth 1 -maxdepth 1 -type d | sed 's/dist\///' | grep -Ev "${{env.FORBIDDEN_BRANCH_NAMES}}")
           echo "::debug::Built branches: $BUILT_BRANCHES"
-          echo "::set-env name=BUILT_BRANCHES::$BUILT_BRANCHES"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "BUILT_BRANCHES<<$EOF" >> "$GITHUB_ENV"
+          echo "$BUILT_BRANCHES" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Copying updated branches builds
         run: |
           echo "::group::Updating branches"
-          for BRANCH in $BUILT_BRANCHES; do
+          for BRANCH in ${{env.BUILT_BRANCHES}}; do
             rm -rf $BRANCH
             mv -f dist/$BRANCH $BRANCH
             echo "::debug::Updated branch $BRANCH"
