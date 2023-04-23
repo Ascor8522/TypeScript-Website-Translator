@@ -27,6 +27,9 @@ jobs:
   gh-pages-build:
     needs: vite-build
     runs-on: ubuntu-latest
+    env:
+      DIST_DIR: dist
+      GH_PAGES_BRANCH: gh-pages
     steps:
       - name: Setting up Node.js
         uses: actions/setup-node@v3
@@ -36,17 +39,35 @@ jobs:
       - name: Cloning the repo
         uses: actions/checkout@v3
 
+      - name: Listing forbidden branch names
+        run: |
+          export FORBIDDEN_BRANCH_NAMES="$GH_PAGES_BRANCH|$DIST_DIR|HEAD|.git"
+          echo "::debug::Forbidden branch names: $FORBIDDEN_BRANCH_NAMES"
+          echo "::set-env name=FORBIDDEN_BRANCH_NAMES::$FORBIDDEN_BRANCH_NAMES"
+        shell: bash
+
+      - name: Getting repo name
+        run: |
+          export REPO_NAME=$(echo ${{ github.repository }} | sed 's/.*\///')
+          echo "::debug::Repo name: $REPO_NAME"
+          echo "::set-env name=REPO_NAME::$REPO_NAME"
+        shell: bash
+
+      - name: Listing current branches
+        run: |
+          # List all the branches in the repo (that have a valid name)
+          export CURRENT_BRANCHES=$(git branch -r | grep -Ev "$FORBIDDEN_BRANCH_NAMES" | sed 's/\s*origin\///')
+          echo "::debug::Current branches: $CURRENT_BRANCHES"
+          echo "::set-env name=CURRENT_BRANCHES::$CURRENT_BRANCHES"
+        shell: bash
+
       - name: Building the site
         run: |
-          BRANCHES_TO_BUILD=$(git branch -r | grep -v HEAD | grep -v gh-pages | grep -v dist | sed 's/\s*origin\///')
-          REPO_NAME=$(echo ${{ github.repository }} | sed 's/.*\///')
-          echo "::debug::Branches: $BRANCHES_TO_BUILD"
-          echo "::debug::Repo name: $REPO_NAME"
-          for BRANCH in $BRANCHES_TO_BUILD; do
+          for BRANCH in $CURRENT_BRANCHES; do
             echo "::group::Building branch $BRANCH"
             git checkout $BRANCH
             npm ci
-            npm run build -- --outDir "dist/$BRANCH" --base "/$REPO_NAME/$BRANCH" --force
+            npm run build -- --outDir "$DIST_DIR/$BRANCH" --base "/$REPO_NAME/$BRANCH" --force
             echo "::endgroup::"
           done
         shell: bash
@@ -57,14 +78,24 @@ jobs:
           ref: gh-pages
           clean: false
 
+      - name: Listing old branches builds
+        run: |
+          # List all the tracked directories in the root of the repo, those are old builds
+          export OLD_BRANCHES=$(git ls-files | xargs dirname | grep -v '^.$' | cut -d'/' -f 1 | uniq)
+          echo "::debug::Old branches: $OLD_BRANCHES"
+          echo "::set-env name=OLD_BRANCHES::$OLD_BRANCHES"
+        shell: bash
+
+      - name: Listing branches to delete
+        run: |
+          # List all the branches that got deleted since the last build
+          export BRANCHES_TO_DELETE=$(echo "$OLD_BRANCHES" | grep -v "$CURRENT_BRANCHES")
+          echo "::debug::Branches to delete: $BRANCHES_TO_DELETE"
+          echo "::set-env name=BRANCHES_TO_DELETE::$BRANCHES_TO_DELETE"
+        shell: bash
+
       - name: Deleting old branches builds
         run: |
-          OLD_BRANCHES=$(find . -mindepth 1 -maxdepth 1 -type d -not -name .git -not -name dist | sed 's/\.\///')
-          CURRENT_BRANCHES=$(git branch -r | grep -v HEAD | grep -v gh-pages | grep -v dist | sed 's/\s*origin\///')
-          BRANCHES_TO_DELETE=$(echo "$OLD_BRANCHES" | grep -v "$CURRENT_BRANCHES")
-          echo "::debug::Old branches: ${OLD_BRANCHES[*]}"
-          echo "::debug::Current branches: ${CURRENT_BRANCHES[*]}"
-          echo "::debug::Branches to delete: ${BRANCHES_TO_DELETE[*]}"
           echo "::group::Deleting branches"
           for BRANCH in $BRANCHES_TO_DELETE; do
             rm -rf $BRANCH
@@ -73,16 +104,18 @@ jobs:
           echo "::endgroup::"
         shell: bash
 
+      - name: Listing built branches
+        run: |
+          # List all the branches that got built
+          export BUILT_BRANCHES=$(find "$DIST_DIR" -mindepth 1 -maxdepth 1 -type d | grep -Ev "$FORBIDDEN_BRANCH_NAMES" | sed 's/dist\///')
+          echo "::debug::Built branches: $BUILT_BRANCHES"
+          echo "::set-env name=BUILT_BRANCHES::$BUILT_BRANCHES"
+        shell: bash
+
       - name: Copying updated branches builds
         run: |
-          OLD_BRANCHES=$(find . -mindepth 1 -maxdepth 1 -type d -not -name .git -not -name dist | sed 's/\.\///')
-          BUILT_BRANCHES=$(find dist -mindepth 1 -maxdepth 1 -type d -not -name dist | sed 's/dist\///')
-          BRANCHES_TO_UPDATE=$(echo "$BUILT_BRANCHES" | grep "$OLD_BRANCHES")
-          echo "::debug::Old branches: ${OLD_BRANCHES[*]}"
-          echo "::debug::Built branches: ${BUILT_BRANCHES[*]}"
-          echo "::debug::Branches to update: ${BRANCHES_TO_UPDATE[*]}"
           echo "::group::Updating branches"
-          for BRANCH in $BRANCHES_TO_UPDATE; do
+          for BRANCH in $BUILT_BRANCHES; do
             rm -rf $BRANCH
             mv -f dist/$BRANCH $BRANCH
             echo "::debug::Updated branch $BRANCH"
