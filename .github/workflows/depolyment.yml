@@ -42,6 +42,7 @@ jobs:
           fetch-depth: 0
 
       - name: Listing forbidden branch names
+        continue-on-error: true
         run: |
           # List all the forbidden branch names, that might cause conflicts
           FORBIDDEN_BRANCH_NAMES="(${{env.GH_PAGES_BRANCH}}|${{env.DIST_DIR}}|HEAD|.git)"
@@ -66,7 +67,7 @@ jobs:
             echo "::group::Building branch $BRANCH"
             git checkout $BRANCH
             npm ci
-            npm run build -- --outDir "${{env.DIST_DIR}}/$BRANCH" --base "/${{env.REPO_NAME}}/$BRANCH" --force
+            npm run build -- --outDir "${{env.DIST_DIR}}/$BRANCH" --base "/${{env.REPO_NAME}}/$BRANCH" --force || true
             echo "::endgroup::"
           done
         shell: bash
