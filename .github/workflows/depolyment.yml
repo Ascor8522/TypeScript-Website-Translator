@@ -92,7 +92,7 @@ jobs:
           CURRENT_BRANCHES="($(echo "${{env.CURRENT_BRANCHES}}" | tr '\n' '|' | sed 's/|$//'))"
           echo "CURRENT_BRANCHES=$CURRENT_BRANCHES"
 
-          BRANCHES_TO_DELETE=$(echo "$OLD_BRANCHES" | grep -Ev "$CURRENT_BRANCHES")
+          BRANCHES_TO_DELETE=$(echo -e "$OLD_BRANCHES\n" | grep -Ev "$CURRENT_BRANCHES")
           echo "BRANCHES_TO_DELETE=$BRANCHES_TO_DELETE"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "BRANCHES_TO_DELETE<<$EOF" >> "$GITHUB_ENV"
