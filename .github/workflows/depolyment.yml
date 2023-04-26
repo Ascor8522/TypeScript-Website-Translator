@@ -97,9 +97,9 @@ jobs:
       - name: Listing branches to delete
         run: |
           # List all the branches that got deleted since the last build
-          CURRENT_BRANCHES="($(echo ${{env.CURRENT_BRANCHES}} | tr '\n' '|' | sed 's/|$//'))"
+          CURRENT_BRANCHES="$(echo "${{env.CURRENT_BRANCHES}}" | tr '\n' '|' | sed 's/|$//')"
           echo "Current branches: $CURRENT_BRANCHES"
-          BRANCHES_TO_DELETE="$(echo ${{env.OLD_BRANCHES}} | grep -Ev $CURRENT_BRANCHES)"
+          BRANCHES_TO_DELETE=$(echo "${{env.OLD_BRANCHES}}" | grep -Ev "$CURRENT_BRANCHES")
           echo "Branches to delete: $BRANCHES_TO_DELETE"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "BRANCHES_TO_DELETE<<$EOF" >> "$GITHUB_ENV"
