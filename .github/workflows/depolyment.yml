@@ -41,7 +41,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Listing forbidden branch names
+      - name: Building the different branches
         continue-on-error: true
         run: |
           # List all the forbidden branch names, that might cause conflicts
@@ -78,7 +78,7 @@ jobs:
           ref: ${{ env.GH_PAGES_BRANCH }}
           clean: false
 
-      - name: Listing old branches builds
+      - name: Deploying to GitHub Pages
         run: |
           # List all the tracked directories in the root of the repo, those are old builds
           OLD_BRANCHES=$(git ls-files | xargs dirname | grep -v '^.$' | cut -d'/' -f 1 | uniq)
@@ -89,7 +89,7 @@ jobs:
           echo "$EOF" >> "$GITHUB_ENV"
 
           # List all the branches that got deleted since the last build
-          CURRENT_BRANCHES="$(echo "${{env.CURRENT_BRANCHES}}" | tr '\n' '|' | sed 's/|$//')"
+          CURRENT_BRANCHES="($(echo "${{env.CURRENT_BRANCHES}}" | tr '\n' '|' | sed 's/|$//'))"
           echo "CURRENT_BRANCHES=$CURRENT_BRANCHES"
 
           BRANCHES_TO_DELETE=$(echo "$OLD_BRANCHES" | grep -Ev "$CURRENT_BRANCHES")
