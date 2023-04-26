@@ -45,32 +45,24 @@ jobs:
         run: |
           # List all the forbidden branch names, that might cause conflicts
           FORBIDDEN_BRANCH_NAMES="(${{env.GH_PAGES_BRANCH}}|${{env.DIST_DIR}}|HEAD|.git)"
-          echo "Forbidden branch names: $FORBIDDEN_BRANCH_NAMES"
+          echo "FORBIDDEN_BRANCH_NAMES=$FORBIDDEN_BRANCH_NAMES"
           echo "FORBIDDEN_BRANCH_NAMES=$FORBIDDEN_BRANCH_NAMES" >> "$GITHUB_ENV"
-        shell: bash
 
-      - name: Getting repo name
-        run: |
           # Get the name of the repo, to use it later
           REPO_NAME=$(echo ${{ github.repository }} | sed 's/.*\///')
-          echo "Repo name: $REPO_NAME"
+          echo "REPO_NAME=$REPO_NAME"
           echo "REPO_NAME=$REPO_NAME" >> "$GITHUB_ENV"
-        shell: bash
 
-      - name: Listing current branches
-        run: |
           # List all the branches in the repo (that have a valid name)
-          CURRENT_BRANCHES=$(git branch -r | sed 's/\s*origin\///' | grep -Ev "${{env.FORBIDDEN_BRANCH_NAMES}}")
-          echo "Current branches: $CURRENT_BRANCHES"
+          CURRENT_BRANCHES=$(git branch -r | sed 's/\s*origin\///' | grep -Ev "$FORBIDDEN_BRANCH_NAMES")
+          echo "CURRENT_BRANCHES=$CURRENT_BRANCHES"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "CURRENT_BRANCHES<<$EOF" >> "$GITHUB_ENV"
           echo "$CURRENT_BRANCHES" >> "$GITHUB_ENV"
           echo "$EOF" >> "$GITHUB_ENV"
-        shell: bash
 
-      - name: Building the site
-        run: |
-          for BRANCH in ${{env.CURRENT_BRANCHES}}; do
+          # Build the site for each branch
+          for BRANCH in $CURRENT_BRANCHES; do
             echo "::group::Building branch $BRANCH"
             git checkout $BRANCH
             npm ci
@@ -89,53 +81,42 @@ jobs:
         run: |
           # List all the tracked directories in the root of the repo, those are old builds
           OLD_BRANCHES=$(git ls-files | xargs dirname | grep -v '^.$' | cut -d'/' -f 1 | uniq)
-          echo "Old branches: $OLD_BRANCHES"
+          echo "OLD_BRANCHES=$OLD_BRANCHES"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "OLD_BRANCHES<<$EOF" >> "$GITHUB_ENV"
           echo "$OLD_BRANCHES" >> "$GITHUB_ENV"
           echo "$EOF" >> "$GITHUB_ENV"
-        shell: bash
 
-      - name: Listing branches to delete
-        run: |
           # List all the branches that got deleted since the last build
-          echo "GH current branches:"
-          echo "${{env.CURRENT_BRANCHES}}"
           CURRENT_BRANCHES="$(echo "${{env.CURRENT_BRANCHES}}" | tr '\n' '|' | sed 's/|$//')"
-          echo "Current branches: $CURRENT_BRANCHES"
-          BRANCHES_TO_DELETE=$(echo "${{env.OLD_BRANCHES}}" | grep -Ev "$CURRENT_BRANCHES")
-          echo "Branches to delete: $BRANCHES_TO_DELETE"
+          echo "CURRENT_BRANCHES=$CURRENT_BRANCHES"
+
+          BRANCHES_TO_DELETE=$(echo "$OLD_BRANCHES" | grep -Ev "$CURRENT_BRANCHES")
+          echo "BRANCHES_TO_DELETE=$BRANCHES_TO_DELETE"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "BRANCHES_TO_DELETE<<$EOF" >> "$GITHUB_ENV"
           echo "$BRANCHES_TO_DELETE" >> "$GITHUB_ENV"
           echo "$EOF" >> "$GITHUB_ENV"
-        shell: bash
 
-      - name: Deleting old branches builds
-        run: |
+          # Delete all the old builds
           echo "::group::Deleting branches"
-          for BRANCH in ${{env.BRANCHES_TO_DELETE}}; do
+          for BRANCH in $BRANCHES_TO_DELETE; do
             rm -rf $BRANCH
             echo "Deleted old branch $BRANCH"
           done
           echo "::endgroup::"
-        shell: bash
 
-      - name: Listing built branches
-        run: |
           # List all the branches that got built
           BUILT_BRANCHES=$(find "${{env.DIST_DIR}}" -mindepth 1 -maxdepth 1 -type d | sed 's/dist\///' | grep -Ev "${{env.FORBIDDEN_BRANCH_NAMES}}")
-          echo "Built branches: $BUILT_BRANCHES"
+          echo "BUILT_BRANCHES=$BUILT_BRANCHES"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "BUILT_BRANCHES<<$EOF" >> "$GITHUB_ENV"
           echo "$BUILT_BRANCHES" >> "$GITHUB_ENV"
           echo "$EOF" >> "$GITHUB_ENV"
-        shell: bash
 
-      - name: Copying updated branches builds
-        run: |
+          # Copy the new builds to the root of the repo
           echo "::group::Updating branches"
-          for BRANCH in ${{env.BUILT_BRANCHES}}; do
+          for BRANCH in $BUILT_BRANCHES; do
             rm -rf $BRANCH
             mv -f dist/$BRANCH $BRANCH
             echo "Updated branch $BRANCH"
