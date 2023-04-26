@@ -1,7 +1,7 @@
 /**
  * Represents a string key, a unique identifier for a source string.
  */
-export type StringKey = string & { readonly _brand: unique symbol; };
+export type TranslationStringKey = string & { readonly _brand: unique symbol; };
 
 /**
  * Asserts that a string is a valid string key.
@@ -12,6 +12,6 @@ export type StringKey = string & { readonly _brand: unique symbol; };
  * @example assertValidStringKey(".foo.bar"); // invalid
  * @example assertValidStringKey("foo..bar"); // invalid
  */
-export function assertValidStringKey(key: string): asserts key is StringKey {
+export function assertValidTranslationStringKey(key: string): asserts key is TranslationStringKey {
 	if(key.split(".").some(e => !e)) throw new Error(`Invalid string key: ${key}`);
 }

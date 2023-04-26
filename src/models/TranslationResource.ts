@@ -1,5 +1,5 @@
 import { Attributes } from "../utils/types";
-import { Language } from "./Language";
+import { TranslationLanguage } from "./TranslationLanguage";
 import { TranslationProgress } from "./TranslationProgress";
 
 abstract class TranslationEntry {
@@ -14,7 +14,7 @@ abstract class TranslationEntry {
 		return this._name;
 	}
 
-	public abstract getProgress(language: Language): TranslationProgress;
+	public abstract getProgress(language: TranslationLanguage): TranslationProgress;
 }
 
 export class TranslationFile extends TranslationEntry {
@@ -24,7 +24,7 @@ export class TranslationFile extends TranslationEntry {
 		super(entry);
 	}
 
-	public getProgress(language: Language): TranslationProgress {
+	public getProgress(language: TranslationLanguage): TranslationProgress {
 		throw new Error("Not implemented");
 	}
 
@@ -58,7 +58,7 @@ export class TranslationFolder extends TranslationEntry {
 		return this;
 	}
 
-	public getProgress(language: Language): TranslationProgress {
+	public getProgress(language: TranslationLanguage): TranslationProgress {
 		return this._children
 			.map(entry => entry.getProgress(language))
 			.reduce((previous, current) => {

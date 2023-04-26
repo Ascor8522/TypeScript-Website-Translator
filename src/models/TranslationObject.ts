@@ -1,28 +1,28 @@
-import { Language } from "./Language";
-import { TranslationString } from "./String";
-import { StringKey } from "./StringKey";
+import { TranslationLanguage } from "./TranslationLanguage";
 import { TranslationProgress } from "./TranslationProgress";
+import { TranslationStringKey } from "./TranslationStringKey";
+import { TranslationTranslatedString } from "./TranslationTranslatedString";
 
 /**
  * Holds translations for some string keys in some languages.
  */
 export class TranslationObject {
-	private translations: Map<StringKey, Map<Language, TranslationString>> = new Map();
+	private translations: Map<TranslationStringKey, Map<TranslationLanguage, TranslationTranslatedString>> = new Map();
 
 	private constructor() { }
 
-	public upsert(key: StringKey, language: Language, translation: TranslationString): TranslationObject {
+	public upsert(key: TranslationStringKey, language: TranslationLanguage, translation: TranslationTranslatedString): TranslationObject {
 		if(!this.translations.get(key)) this.translations.set(key, new Map());
 		this.translations.get(key)!.set(language, translation);
 		return this;
 	}
 
-	public get(key: StringKey, language: Language): TranslationString | null {
+	public get(key: TranslationStringKey, language: TranslationLanguage): TranslationTranslatedString | null {
 		if(!this.translations.get(key)) throw new Error(`No translation found for key ${key}`);
 		return this.translations.get(key)!.get(language) ?? null;
 	}
 
-	public getProgress(language: Language, key: TranslationString | "" = ""): TranslationProgress {
+	public getProgress(language: TranslationLanguage, key: TranslationTranslatedString | "" = ""): TranslationProgress {
 		throw new Error("Not implemented");
 	}
 }
