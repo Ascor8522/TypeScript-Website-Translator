@@ -97,6 +97,8 @@ jobs:
       - name: Listing branches to delete
         run: |
           # List all the branches that got deleted since the last build
+          echo "GH current branches:"
+          echo "${{env.CURRENT_BRANCHES}}"
           CURRENT_BRANCHES="$(echo "${{env.CURRENT_BRANCHES}}" | tr '\n' '|' | sed 's/|$//')"
           echo "Current branches: $CURRENT_BRANCHES"
           BRANCHES_TO_DELETE=$(echo "${{env.OLD_BRANCHES}}" | grep -Ev "$CURRENT_BRANCHES")
