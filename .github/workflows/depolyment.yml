@@ -43,7 +43,7 @@ jobs:
         run: |
           # List all the forbidden branch names, that might cause conflicts
           FORBIDDEN_BRANCH_NAMES="(${{env.GH_PAGES_BRANCH}}|${{env.DIST_DIR}}|HEAD|.git)"
-          echo "::debug::Forbidden branch names: $FORBIDDEN_BRANCH_NAMES"
+          echo "Forbidden branch names: $FORBIDDEN_BRANCH_NAMES"
           echo "FORBIDDEN_BRANCH_NAMES=$FORBIDDEN_BRANCH_NAMES" >> "$GITHUB_ENV"
         shell: bash
 
@@ -51,7 +51,7 @@ jobs:
         run: |
           # Get the name of the repo, to use it later
           REPO_NAME=$(echo ${{ github.repository }} | sed 's/.*\///')
-          echo "::debug::Repo name: $REPO_NAME"
+          echo "Repo name: $REPO_NAME"
           echo "REPO_NAME=$REPO_NAME" >> "$GITHUB_ENV"
         shell: bash
 
@@ -59,7 +59,7 @@ jobs:
         run: |
           # List all the branches in the repo (that have a valid name)
           CURRENT_BRANCHES=$(git branch -r | sed 's/\s*origin\///' | grep -Ev "${{env.FORBIDDEN_BRANCH_NAMES}}")
-          echo "::debug::Current branches: $CURRENT_BRANCHES"
+          echo "Current branches: $CURRENT_BRANCHES"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "CURRENT_BRANCHES<<$EOF" >> "$GITHUB_ENV"
           echo "$CURRENT_BRANCHES" >> "$GITHUB_ENV"
@@ -87,7 +87,7 @@ jobs:
         run: |
           # List all the tracked directories in the root of the repo, those are old builds
           OLD_BRANCHES=$(git ls-files | xargs dirname | grep -v '^.$' | cut -d'/' -f 1 | uniq)
-          echo "::debug::Old branches: $OLD_BRANCHES"
+          echo "Old branches: $OLD_BRANCHES"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "OLD_BRANCHES<<$EOF" >> "$GITHUB_ENV"
           echo "$OLD_BRANCHES" >> "$GITHUB_ENV"
@@ -97,9 +97,10 @@ jobs:
       - name: Listing branches to delete
         run: |
           # List all the branches that got deleted since the last build
-          CURRENT_BRANCHES="($(echo ${{env.CURRENT_BRANCHES}} | tr '\n' '|'))"
-          BRANCHES_TO_DELETE=$(echo "${{env.OLD_BRANCHES}}" | grep -Ev "$CURRENT_BRANCHES")
-          echo "::debug::Branches to delete: $BRANCHES_TO_DELETE"
+          CURRENT_BRANCHES="($(echo ${{env.CURRENT_BRANCHES}} | tr '\n' '|' | sed 's/|$//'))"
+          echo "Current branches: $CURRENT_BRANCHES"
+          BRANCHES_TO_DELETE="$(echo ${{env.OLD_BRANCHES}} | grep -Ev $CURRENT_BRANCHES)"
+          echo "Branches to delete: $BRANCHES_TO_DELETE"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "BRANCHES_TO_DELETE<<$EOF" >> "$GITHUB_ENV"
           echo "$BRANCHES_TO_DELETE" >> "$GITHUB_ENV"
@@ -111,7 +112,7 @@ jobs:
           echo "::group::Deleting branches"
           for BRANCH in ${{env.BRANCHES_TO_DELETE}}; do
             rm -rf $BRANCH
-            echo "::debug::Deleted old branch $BRANCH"
+            echo "Deleted old branch $BRANCH"
           done
           echo "::endgroup::"
         shell: bash
@@ -120,7 +121,7 @@ jobs:
         run: |
           # List all the branches that got built
           BUILT_BRANCHES=$(find "${{env.DIST_DIR}}" -mindepth 1 -maxdepth 1 -type d | sed 's/dist\///' | grep -Ev "${{env.FORBIDDEN_BRANCH_NAMES}}")
-          echo "::debug::Built branches: $BUILT_BRANCHES"
+          echo "Built branches: $BUILT_BRANCHES"
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "BUILT_BRANCHES<<$EOF" >> "$GITHUB_ENV"
           echo "$BUILT_BRANCHES" >> "$GITHUB_ENV"
@@ -133,7 +134,7 @@ jobs:
           for BRANCH in ${{env.BUILT_BRANCHES}}; do
             rm -rf $BRANCH
             mv -f dist/$BRANCH $BRANCH
-            echo "::debug::Updated branch $BRANCH"
+            echo "Updated branch $BRANCH"
           done
           echo "::endgroup::"
           rm -rf dist
