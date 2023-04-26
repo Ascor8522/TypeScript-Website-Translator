@@ -10,9 +10,13 @@ This project is a small **3rd party** Transifex-inspired translation app made to
 
 This project allows to easily translate the TypeScript website into any language using an easy to use an familiar interface for translators.
 
-> I don't think the team are likely to commit to migrating to a new service and setting all the localization from scratch - the current setup continues to run and allows for folks who have contributed to continue doing so even while the site has largely stopped receiving changes.
+> I don't think the team are likely to commit to migrating to a new service and
+> setting all the localization from scratch - the current setup continues to run
+> and allows for folks who have contributed to continue doing so even while the
+> site has largely stopped receiving changes.
 >
-> *- [Orta](https://github.com/orta), in the TypeScript Community Discord server*
+> _- [Orta](https://github.com/orta), in the TypeScript Community Discord
+> server_
 
 ## Features
 
@@ -26,7 +30,8 @@ This project allows to easily translate the TypeScript website into any language
 
 ## Live version
 
-You'll find a live version of this app at [typescript-website-translator.vercel.app/](https://typescript-website-translator.vercel.app/).
+You'll find a live version of this app at
+[typescript-website-translator.github.io/website/](https://typescript-website-translator.github.io/website/).
 
 ## How to use
 

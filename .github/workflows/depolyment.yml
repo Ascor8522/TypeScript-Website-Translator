@@ -1,0 +1,135 @@
+name: Deployment
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+  create:
+  delete:
+
+jobs:
+  vite-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setting up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+
+      - name: Cloning the repo & checking out the latest commit
+        uses: actions/checkout@v3
+
+      - name: Installing dependencies
+        run: npm ci
+
+      - name: Building the site
+        run: npm run build
+
+  gh-pages-build:
+    needs: vite-build
+    runs-on: ubuntu-latest
+    env:
+      DIST_DIR: dist
+      GH_PAGES_BRANCH: gh-pages
+    steps:
+      - name: Setting up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+
+      - name: Cloning the repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Building the different branches
+        continue-on-error: true
+        run: |
+          # List all the forbidden branch names, that might cause conflicts
+          FORBIDDEN_BRANCH_NAMES="(${{env.GH_PAGES_BRANCH}}|${{env.DIST_DIR}}|HEAD|.git)"
+          echo "FORBIDDEN_BRANCH_NAMES=$FORBIDDEN_BRANCH_NAMES"
+          echo "FORBIDDEN_BRANCH_NAMES=$FORBIDDEN_BRANCH_NAMES" >> "$GITHUB_ENV"
+
+          # Get the name of the repo, to use it later
+          REPO_NAME=$(echo ${{ github.repository }} | sed 's/.*\///')
+          echo "REPO_NAME=$REPO_NAME"
+          echo "REPO_NAME=$REPO_NAME" >> "$GITHUB_ENV"
+
+          # List all the branches in the repo (that have a valid name)
+          CURRENT_BRANCHES=$(git branch -r | sed 's/\s*origin\///' | grep -Ev "$FORBIDDEN_BRANCH_NAMES")
+          echo "CURRENT_BRANCHES=$CURRENT_BRANCHES"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "CURRENT_BRANCHES<<$EOF" >> "$GITHUB_ENV"
+          echo "$CURRENT_BRANCHES" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
+
+          # Build the site for each branch
+          for BRANCH in $CURRENT_BRANCHES; do
+            echo "::group::Building branch $BRANCH"
+            git checkout $BRANCH
+            npm ci
+            npm run build -- --outDir "${{env.DIST_DIR}}/$BRANCH" --base "/$REPO_NAME/$BRANCH" --force || true
+            echo "::endgroup::"
+          done
+        shell: bash
+
+      - name: Switching to gh-pages
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.GH_PAGES_BRANCH }}
+          clean: false
+
+      - name: Deploying to GitHub Pages
+        run: |
+          # List all the tracked directories in the root of the repo, those are old builds
+          OLD_BRANCHES=$(git ls-files | xargs dirname | grep -v '^.$' | cut -d'/' -f 1 | uniq)
+          echo "OLD_BRANCHES=$OLD_BRANCHES"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "OLD_BRANCHES<<$EOF" >> "$GITHUB_ENV"
+          echo "$OLD_BRANCHES" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
+
+          # List all the branches that got deleted since the last build
+          CURRENT_BRANCHES="($(echo "${{env.CURRENT_BRANCHES}}" | tr '\n' '|' | sed 's/|$//'))"
+          echo "CURRENT_BRANCHES=$CURRENT_BRANCHES"
+
+          BRANCHES_TO_DELETE=$(echo -e "$OLD_BRANCHES\n" | grep -Ev "$CURRENT_BRANCHES")
+          echo "BRANCHES_TO_DELETE=$BRANCHES_TO_DELETE"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "BRANCHES_TO_DELETE<<$EOF" >> "$GITHUB_ENV"
+          echo "$BRANCHES_TO_DELETE" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
+
+          # Delete all the old builds
+          echo "::group::Deleting branches"
+          for BRANCH in $BRANCHES_TO_DELETE; do
+            rm -rf $BRANCH
+            echo "Deleted old branch $BRANCH"
+          done
+          echo "::endgroup::"
+
+          # List all the branches that got built
+          BUILT_BRANCHES=$(find "${{env.DIST_DIR}}" -mindepth 1 -maxdepth 1 -type d | sed 's/dist\///' | grep -Ev "${{env.FORBIDDEN_BRANCH_NAMES}}")
+          echo "BUILT_BRANCHES=$BUILT_BRANCHES"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "BUILT_BRANCHES<<$EOF" >> "$GITHUB_ENV"
+          echo "$BUILT_BRANCHES" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
+
+          # Copy the new builds to the root of the repo
+          echo "::group::Updating branches"
+          for BRANCH in $BUILT_BRANCHES; do
+            rm -rf $BRANCH
+            mv -f dist/$BRANCH $BRANCH
+            echo "Updated branch $BRANCH"
+          done
+          echo "::endgroup::"
+          rm -rf dist
+        shell: bash
+
+      - name: Committing the changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: .
+          default_author: github_actions
+          message: "Deploy ${{ github.push.after }} to GitHub Pages"
+          push: true
