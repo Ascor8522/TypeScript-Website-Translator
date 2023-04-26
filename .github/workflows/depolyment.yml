@@ -67,7 +67,7 @@ jobs:
             echo "::group::Building branch $BRANCH"
             git checkout $BRANCH
             npm ci
-            npm run build -- --outDir "${{env.DIST_DIR}}/$BRANCH" --base "/${{env.REPO_NAME}}/$BRANCH" --force || true
+            npm run build -- --outDir "${{env.DIST_DIR}}/$BRANCH" --base "/$REPO_NAME/$BRANCH" --force || true
             echo "::endgroup::"
           done
         shell: bash
