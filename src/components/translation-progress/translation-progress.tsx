@@ -1,6 +1,4 @@
-import classNames from "classnames";
-
-import style from './translation-progress.module.scss';
+import styles from './translation-progress.module.scss';
 
 export default function TranslationProgress({ translated, reviewed }: TranslationProgressProps) {
 
@@ -13,18 +11,24 @@ export default function TranslationProgress({ translated, reviewed }: Translatio
 	const untranslatedPercentageDiff = 100 - untranslatedPercentage - translatedPercentageDiff;
 
 	return (
-		<div class={classNames({
-			[style["meter"]]: true,
-		})}>
-			<div class={classNames({
-				[style["reviewed"]]: true,
-			})} style={{ flexBasis: `${reviewedPercentageDiff}%` }} title="Translated + Reviewed">{!!reviewedPercentage && reviewedPercentage + "%"}</div>
-			<div class={classNames({
-				[style["translated"]]: true,
-			})} style={{ flexBasis: `${translatedPercentageDiff}%` }} title="Translated">{!!translatedPercentage && translatedPercentage + "%"}</div>
-			<div class={classNames({
-				[style["untranslated"]]: true,
-			})} title="Untranslated">{!!untranslatedPercentage && untranslatedPercentage + "%"}</div>
+		<div class={styles.meter}>
+			<div
+				class={styles.reviewed}
+				style={{ flexBasis: `${reviewedPercentageDiff}%` }}
+				title="Translated + Reviewed">
+				{!!reviewedPercentage && reviewedPercentage + "%"}
+			</div>
+			<div
+				class={styles.translated}
+				style={{ flexBasis: `${translatedPercentageDiff}%` }}
+				title="Translated">
+				{!!translatedPercentage && translatedPercentage + "%"}
+			</div>
+			<div
+				class={styles.untranslated}
+				title="Untranslated">
+				{!!untranslatedPercentage && untranslatedPercentage + "%"}
+			</div>
 		</div>
 	);
 }

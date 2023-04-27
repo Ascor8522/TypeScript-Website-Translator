@@ -9,7 +9,9 @@ import GlossaryEditor from "../pages/glossary-editor/glossary-editor";
 export function App() {
 	return (
 		<>
-			<Header />
+			<Header disabled={true} />
+			{/* The newt booleans are only for test purposes */}
+			{/* You can easily enable/disable a page and view it while the app is in construction */}
 			{true && <FolderPicker />}
 			{false && <Dashboard />}
 			{false && <Editor />}

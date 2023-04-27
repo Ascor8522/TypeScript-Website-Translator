@@ -1,13 +1,13 @@
 @import "../../../assets/globals";
 
-.menu-bar {
+.menuBar {
 	display: flex;
 	background-color: $background-color;
 	padding: 5px;
 	border-bottom: 5px solid #919191;
 }
 
-.menu-item {
+.menuItem {
 	background-color: transparent;
 	border: none;
 	cursor: pointer;

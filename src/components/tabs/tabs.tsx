@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { JSX } from "preact";
 import { useState } from "preact/hooks";
 
@@ -11,15 +10,15 @@ export default function Tabs({ defaultTab, children: tabs, ...props }: TabsProps
 	const [activeTab, setActiveTab] = useState(defaultTab ?? tabs[0].props.name);
 
 	return (
-		<div class={classNames({
-			[styles["tabs"]]: true,
-		})} {...props}>
-			<div class={classNames({
-				[styles["tab-list"]]: true,
-			})}>
+		<div class={styles.tabs} {...props}>
+			<div class={styles.tabList}>
 				{
 					tabs
-						.map(tab => <TabButton activeTab={activeTab} setActiveTab={setActiveTab}>{tab}</TabButton>)
+						.map(tab => <TabButton
+							activeTab={activeTab}
+							setActiveTab={setActiveTab}>
+							{tab}
+						</TabButton>)
 				}
 			</div>
 			<TabPanel activeTab={activeTab}>{tabs}</TabPanel>

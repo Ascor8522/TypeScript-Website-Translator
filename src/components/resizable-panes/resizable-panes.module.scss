@@ -24,11 +24,11 @@
 
 }
 
-.column-panes {
+.columnPanes {
 	flex-direction: column;
 }
 
-.row-panes {
+.rowPanes {
 	flex-direction: row;
 }
 
@@ -54,12 +54,12 @@ $handle-width: 3px;
 	}
 }
 
-.horizontal-handle {
+.horizontalHandle {
 	height: $handle-width;
 	cursor: row-resize;
 }
 
-.vertical-handle {
+.verticalHandle {
 	width: $handle-width;
 	cursor: col-resize;
 }

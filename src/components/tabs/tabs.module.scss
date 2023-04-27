@@ -5,14 +5,14 @@
 	flex-direction: column;
 }
 
-.tab-list {
+.tabList {
 	display: flex;
 	flex-direction: row;
 	gap: 0.25rem;
 	flex-grow: 0;
 }
 
-.tab-button {
+.tabButton {
 	min-width: 5rem;
 	padding: 0.5rem;
 	padding-bottom: 0.75rem;
@@ -60,7 +60,7 @@
 }
 
 
-.tab-panel {
+.tabPanel {
 	flex-grow: 1;
 	border: 1px solid $border-color;
 	padding: 1rem;

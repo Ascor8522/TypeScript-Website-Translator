@@ -60,10 +60,9 @@ export default function ResizeHandle({ direction, ...props }: ResizeHandleProps)
 	}, [direction]);
 
 	return (
-		<div class={classnames({
-			[styles["handle"]]: true,
-			[styles["vertical-handle"]]: direction === "row",
-			[styles["horizontal-handle"]]: direction === "column",
+		<div class={classnames(styles.handle, {
+			[styles.verticalHandle]: direction === "row",
+			[styles.horizontalHandle]: direction === "column",
 		})} {...props} ref={ref} />
 	);
 }

@@ -1,18 +1,15 @@
-import classNames from "classnames";
-
 import styles from "./breadcrumbs.module.scss";
 
-export default function BreadCrumbs({ path }: BreadCrumbsProps) {
+export default function BreadCrumbs({ path, disabled = false }: BreadCrumbsProps) {
 	return (
-		<div class={classNames({
-			[styles["path"]]: true,
-		})}>
+		<div class={styles.path}>
 			{
 				path
 					.split("/")
-					.map((part, i, a) => [!!i && <span>/</span>, <span class={classNames({
-						[styles["segment"]]: true,
-					})}>{part}</span>])
+					.map((part, i, a) => [
+						!!i && <span>/</span>,
+						<span class={styles.segment}>{part}</span>,
+					])
 			}
 		</div>
 	);
@@ -20,4 +17,5 @@ export default function BreadCrumbs({ path }: BreadCrumbsProps) {
 
 interface BreadCrumbsProps {
 	path: string;
+	disabled?: boolean;
 }

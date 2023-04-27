@@ -6,10 +6,9 @@ import ResizeHandle from "./resize-handle";
 
 export default function ResizablePanes({ children, direction = "row", ...props }: ResizablePanesProps) {
 	return (
-		<div class={classnames({
-			[styles["panes"]]: true,
-			[styles["row-panes"]]: direction === "row",
-			[styles["column-panes"]]: direction === "column",
+		<div class={classnames(styles.panes, {
+			[styles.rowPanes]: direction === "row",
+			[styles.columnPanes]: direction === "column",
 		})} {...props}>
 			{
 				children

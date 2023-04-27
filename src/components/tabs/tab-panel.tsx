@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { Component } from "preact";
 import { useEffect } from "preact/hooks";
 
@@ -12,9 +11,7 @@ export default function TabPanel({ children: tabs, activeTab }: TabPanelProps) {
 	}, [tabs, activeTab]);
 
 	return (
-		<div class={classNames({
-			[styles["tab-panel"]]: true,
-		})}>
+		<div class={styles.tabPanel}>
 			{
 				tabs
 					.map(tab => tab as unknown as Component<TabProps, {}>)
