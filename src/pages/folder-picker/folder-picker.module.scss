@@ -1,0 +1,13 @@
+@import "../../assets/globals.scss";
+
+.main-container {
+	display: flex;
+	height: calc(100vh - 50px); // Adjust based on the height of the top menu bar
+}
+
+.right-pane {
+	width: 80%; // Adjust the width of the right pane as needed
+	background-color: $background-color;
+	padding: 20px;
+	box-sizing: border-box;
+}

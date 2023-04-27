@@ -1,30 +1,30 @@
 @import "../../../assets/globals";
 
 .menu-bar {
-  display: flex;
-  background-color: $background-color;
-  padding: 5px;
-  border-bottom: 5px solid #919191;
+	display: flex;
+	background-color: $background-color;
+	padding: 5px;
+	border-bottom: 5px solid #919191;
 }
 
 .menu-item {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  margin-right: 20px;
-  padding: 5px 10px;
-  transition: background-color 0.3s;
-  margin-bottom: 10px;
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	font-size: 16px;
+	margin-right: 20px;
+	padding: 5px 10px;
+	transition: background-color 0.3s;
+	margin-bottom: 10px;
 
-  &:hover,
-  &.active {
-    background-color: #ddd;
-  }
+	&:hover,
+	&.active {
+		background-color: #ddd;
+	}
 }
 
-.logo{
-  margin-left: 40px;
-  margin-right: 40px;
-  font-size: 26px;
+.logo {
+	margin-left: 40px;
+	margin-right: 40px;
+	font-size: 26px;
 }

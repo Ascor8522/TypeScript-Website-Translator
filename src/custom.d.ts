@@ -1,5 +1,5 @@
 declare global {
-    interface File {
-      webkitGetAsEntry(): any;
-    }
-  }
+	interface File {
+		webkitGetAsEntry(): any;
+	}
+}

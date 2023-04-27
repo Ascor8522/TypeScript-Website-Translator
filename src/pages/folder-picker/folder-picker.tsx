@@ -1,25 +1,54 @@
 import { useState } from "preact/hooks";
 
+import FolderSelector from "../../components/folder-selector/folder-selector";
+import styles from "./folder-picker.module.scss";
+
 export default function FolderPicker({ }: FolderPickerProps) {
-	const [fileSystemDirectoryEntry, setFileSystemDirectoryEntry] = useState<FileSystemDirectoryEntry | null>(null);
+	const [isFileUploaded, setIsFileUploaded] = useState(false);
+	const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
-	const onFileSystemAccessGranted = (fileSystem: FileSystem) => {
-		/// setFileSystemDirectoryEntry(fileSystem);
-		console.log("File System Access Granted");
+	const onFileUploaded = (files: File[]) => {
+		setIsFileUploaded(true);
+		setUploadedFiles(files);
 	};
-	const onFileSystemAccessDenied = (error: Error) => {
-		console.log("File System Access Denied");
-	};
-	const requestFileSystemAccess = () => window.webkitRequestFileSystem(window.PERSISTENT, 1024 * 1024, onFileSystemAccessGranted, onFileSystemAccessDenied);
 
-	if(!fileSystemDirectoryEntry) return (
-		<>
-			<input onChange={requestFileSystemAccess} type="file">Request File System Access</input>
-		</>
-	);
+	/*
+		const [fileSystemDirectoryEntry, setFileSystemDirectoryEntry] = useState<FileSystemDirectoryEntry | null>(null);
+
+		const onFileSystemAccessGranted = (fileSystem: FileSystem) => {
+			/// setFileSystemDirectoryEntry(fileSystem);
+			console.log("File System Access Granted");
+		};
+		const onFileSystemAccessDenied = (error: Error) => {
+			console.log("File System Access Denied");
+		};
+		const requestFileSystemAccess = () => window.webkitRequestFileSystem(window.PERSISTENT, 1024 * 1024, onFileSystemAccessGranted, onFileSystemAccessDenied);
+
+		if(!fileSystemDirectoryEntry) return (
+			<>
+				<input onChange={requestFileSystemAccess} type="file">Request File System Access</input>
+			</>
+		);
+		*/
 
 	return (
-		<></>
+		<>
+			<div class={styles["main-container"]}>
+				<div class={styles["right-pane"]}>
+					{!isFileUploaded && <FolderSelector onFileUploaded={onFileUploaded} />}
+					{isFileUploaded && (
+						<div>
+							<h2>Uploaded Files</h2>
+							<ul>
+								{uploadedFiles.map((file) => (
+									<li key={file.name}>{file.name}</li>
+								))}
+							</ul>
+						</div>
+					)}
+				</div>
+			</div>
+		</>
 	);
 }
 

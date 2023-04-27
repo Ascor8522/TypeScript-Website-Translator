@@ -1,25 +1,25 @@
 @import "../../assets/globals";
 
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
 }
 
 .form-container {
-  width: 100vw;
-  height: 100vh;
-  backdrop-filter: blur(6px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	width: 100vw;
+	height: 100vh;
+	backdrop-filter: blur(6px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .upload-files-container {
@@ -43,9 +43,11 @@
 	width: 350px;
 	text-align: center;
 }
+
 .drag-file-area {
 	font-size: 50px;
 }
+
 .drag-file-area h3 {
 	font-size: 26px;
 	margin-top: 0;
@@ -56,23 +58,27 @@
 .drag-file-area label {
 	font-size: 19px;
 }
+
 .drag-file-area label .browse-files-text {
 	color: #7b2cbf;
 	font-weight: bolder;
 	cursor: pointer;
 }
+
 .browse-files span {
 	position: relative;
 	top: -25px;
 }
+
 .default-file-input {
 	opacity: 0;
 }
+
 .uploadFileIcon {
 	width: 50px;
 	height: 50px;
-	position: absolute; 
-	top: 1; 
-	left: 50%; 
+	position: absolute;
+	top: 1;
+	left: 50%;
 	transform: translateX(-50%);
-  }
+}
