@@ -31,24 +31,21 @@ export default function FolderPicker({ }: FolderPickerProps) {
 		);
 		*/
 
+	if(isFileUploaded) return (
+		<div>
+			<h2>Uploaded Files</h2>
+			<ul>
+				{uploadedFiles.map((file) => (
+					<li key={file.name}>{file.name}</li>
+				))}
+			</ul>
+		</div>
+	);
+
 	return (
-		<>
-			<div class={styles["main-container"]}>
-				<div class={styles["right-pane"]}>
-					{!isFileUploaded && <FolderSelector onFileUploaded={onFileUploaded} />}
-					{isFileUploaded && (
-						<div>
-							<h2>Uploaded Files</h2>
-							<ul>
-								{uploadedFiles.map((file) => (
-									<li key={file.name}>{file.name}</li>
-								))}
-							</ul>
-						</div>
-					)}
-				</div>
-			</div>
-		</>
+		<div class={styles.spacer}>
+			<FolderSelector onFileUploaded={onFileUploaded} />
+		</div>
 	);
 }
 

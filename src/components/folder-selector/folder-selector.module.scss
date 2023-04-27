@@ -1,84 +1,47 @@
 @import "../../assets/globals";
 
-.modal {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	z-index: 1000;
-}
+.formContainer {}
 
-.form-container {
-	width: 100vw;
-	height: 100vh;
-	backdrop-filter: blur(6px);
+.dragFileArea {
 	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.upload-files-container {
-	background-color: $background-color;
-	width: 420px;
-	padding: 30px 60px;
-	border-radius: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	flex-direction: column;
-	box-shadow: rgba(0, 0, 0, 0.24) 0px 10px 20px, rgba(0, 0, 0, 0.28) 0px 6px 6px;
-	position: relative;
-}
-
-.drag-file-area {
-	border: 2px dashed #7b2cbf;
-	border-radius: 40px;
-	margin: 10px 0 15px;
-	padding: 30px 50px;
-	width: 350px;
+	gap: 1rem;
+	align-items: center;
+	border: 2px dashed $accent-color;
+	padding: 4rem 5rem;
 	text-align: center;
-}
-
-.drag-file-area {
-	font-size: 50px;
-}
-
-.drag-file-area h3 {
-	font-size: 26px;
-	margin-top: 0;
-	margin-bottom: -20px;
-	font-family: 'Montserrat', sans-serif;
-}
-
-.drag-file-area label {
-	font-size: 19px;
-}
-
-.drag-file-area label .browse-files-text {
-	color: #7b2cbf;
-	font-weight: bolder;
 	cursor: pointer;
+	transition: border-color 0.2s ease-in-out;
+
+	&.drag-file-area-hover,
+	&:hover {
+		border-color: $translated-color;
+
+		.browseFilesText {
+			color: $translated-color;
+		}
+	}
 }
 
-.browse-files span {
-	position: relative;
-	top: -25px;
-}
-
-.default-file-input {
-	opacity: 0;
-}
+.drag-file-area-hover {}
 
 .uploadFileIcon {
-	width: 50px;
-	height: 50px;
-	position: absolute;
-	top: 1;
-	left: 50%;
-	transform: translateX(-50%);
+	height: 5rem;
+}
+
+.instructions {
+	font-size: 2rem;
+	font-family: 'Montserrat', sans-serif;
+	margin: 0;
+}
+
+.alternativeInstructions {
+	font-size: 1.25rem;
+	margin: 0;
+}
+
+.browseFilesText {
+	color: $accent-color;
+	font-weight: bolder;
+	transition: color 0.2s ease-in-out;
 }
