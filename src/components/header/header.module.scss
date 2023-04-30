@@ -5,3 +5,25 @@
 	gap: 1rem;
 	align-items: center;
 }
+
+.logoName {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+}
+
+.logo {
+	height: 1rem;
+}
+
+.viewSources {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	line-height: 1rem;
+}
+
+.githubLogo {
+	height: 1rem;
+	filter: brightness(10);
+}

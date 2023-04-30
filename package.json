@@ -10,7 +10,8 @@
 	},
 	"dependencies": {
 		"iso-639-1": "^2.1.15",
-		"preact": "^10.13.0"
+		"preact": "^10.13.0",
+		"preact-router": "^4.1.0"
 	},
 	"devDependencies": {
 		"@preact/preset-vite": "^2.5.0",

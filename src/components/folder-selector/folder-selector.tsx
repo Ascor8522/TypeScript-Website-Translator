@@ -107,13 +107,14 @@ function FolderSelector({ onFileUploaded }: FileUploadProps) {
 				onDragEnter={e => { preventDefault(e); onDragEnter(e); }}
 				onDragLeave={e => { preventDefault(e); onDragLeave(e); }}
 				onDragEnd={e => { preventDefault(e); onDragLeave(e); }}
-				onDrop={e => { preventDefault(e); onDragLeave(e); onDrop(e); }}>
+				onDrop={e => { preventDefault(e); onDragLeave(e); onDrop(e); }}
+				tabIndex={0}>
 				<img
 					class={styles.uploadFileIcon}
 					src={uploadFileIcon}
 					alt="Upload Folder"
 				/>
-				<p class={styles.instructions}>Drag & Drop your folder here</p>
+				<p class={styles.instructions}>Drag & Drop the <br /> TypeScript-Website-Localizations <br /> folder here</p>
 				or
 				<p class={styles.alternativeInstructions}>
 					{" "}

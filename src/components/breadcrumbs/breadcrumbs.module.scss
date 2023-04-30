@@ -17,4 +17,10 @@
 	&:hover {
 		background-color: $inactive-color;
 	}
+
+	&[disabled] {
+		background-color: $inactive-color;
+		color: white;
+		cursor: not-allowed;
+	}
 }

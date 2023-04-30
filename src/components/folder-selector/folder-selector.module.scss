@@ -27,6 +27,8 @@
 
 .uploadFileIcon {
 	height: 5rem;
+	animation: hithere 3s ease infinite;
+	animation-delay: 1s;
 }
 
 .instructions {
@@ -44,4 +46,39 @@
 	color: $accent-color;
 	font-weight: bolder;
 	transition: color 0.2s ease-in-out;
+}
+
+
+@keyframes hithere {
+	0% {
+		transform: scale(1);
+	}
+
+	15% {
+		transform: scale(1.2);
+	}
+
+	20% {
+		transform: rotate(-20deg) scale(1.2);
+	}
+
+	25% {
+		transform: rotate(20deg) scale(1.2);
+	}
+
+	30% {
+		transform: rotate(-20deg) scale(1.2);
+	}
+
+	35% {
+		transform: rotate(0deg) scale(1.2);
+	}
+
+	50% {
+		transform: scale(1);
+	}
+
+	100% {
+		transform: scale(1);
+	}
 }
