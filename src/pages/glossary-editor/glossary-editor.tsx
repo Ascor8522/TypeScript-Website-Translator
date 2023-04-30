@@ -1,9 +1,11 @@
+import { Page } from "../page";
+
 export default function GlossaryEditor({ }: GlossaryEditorProps) {
 	return (
 		<></>
 	);
 }
 
-interface GlossaryEditorProps {
+interface GlossaryEditorProps extends Page {
 
 }

@@ -2,6 +2,7 @@ import ResizablePanes from "../../components/resizable-panes/resizable-panes";
 import Tab from "../../components/tabs/tab";
 import Tabs from "../../components/tabs/tabs";
 import TranslationProgress from "../../components/translation-progress/translation-progress";
+import { Page } from "../page";
 
 export default function Editor({ }: EditorProps) {
 	return (
@@ -63,6 +64,6 @@ export default function Editor({ }: EditorProps) {
 	);
 }
 
-interface EditorProps {
+interface EditorProps extends Page {
 
 }

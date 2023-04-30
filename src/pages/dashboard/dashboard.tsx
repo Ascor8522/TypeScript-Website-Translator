@@ -1,4 +1,5 @@
 import MenuBar from '../../components/dashboard/menubar/menubar';
+import { Page } from "../page";
 
 export default function Dashboard({ }: DashboardProps) {
 	return (
@@ -8,4 +9,4 @@ export default function Dashboard({ }: DashboardProps) {
 	);
 }
 
-interface DashboardProps { }
+interface DashboardProps extends Page { }

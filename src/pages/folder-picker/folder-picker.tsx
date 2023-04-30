@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 
 import FolderSelector from "../../components/folder-selector/folder-selector";
+import { Page } from "../page";
 import styles from "./folder-picker.module.scss";
 
 export default function FolderPicker({ }: FolderPickerProps) {
@@ -49,6 +50,6 @@ export default function FolderPicker({ }: FolderPickerProps) {
 	);
 }
 
-interface FolderPickerProps {
+interface FolderPickerProps extends Page {
 
 }
